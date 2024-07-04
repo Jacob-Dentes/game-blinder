@@ -40,24 +40,23 @@ struct App {
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let _ = {
-            //(icon_rgba, icon_width, icon_height) = {
-            // let image = image::open("ph--eye-slash-light")
-            //      .expect("Failed to load window icon.")
-            //      .into_rgba8();
-            // let (width, height) = image.dimensions();
-            // let rgba = image.into_raw();
-            // (rgba, width, height)
+        let (icon_rgba, icon_width, icon_height) = {
+            let image = image::open("assets/ph--eye-slash-light.png")
+                .expect("Failed to load window icon.")
+                .into_rgba8();
+            let (width, height) = image.dimensions();
+            let rgba = image.into_raw();
+            (rgba, width, height)
         };
-        // let icon = winit::window::Icon::from_rgba(icon_rgba, icon_width, icon_height)
-        //     .expect("Failed to process icon file.");
+        let icon = winit::window::Icon::from_rgba(icon_rgba, icon_width, icon_height)
+            .expect("Failed to process icon file.");
         let window = event_loop
             .create_window(
                 Window::default_attributes()
                     .with_transparent(true)
                     .with_decorations(false)
                     .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
-                    // .with_window_icon(Some(icon.clone()))
+                    .with_window_icon(Some(icon.clone()))
                     .with_title("Blinder"),
             )
             .unwrap();
