@@ -1,0 +1,41 @@
+[00:00:00.064] (10b8) INFO   Loading X11 library to get the current display
+[00:00:00.065] (10b8) INFO   EGL_MESA_platform_surfaceless not available. Using default platform
+[00:00:00.066] (10b8) INFO   Enabling EGL debug output
+[00:00:00.205] (10b8) INFO   Display vendor "Google Inc. (NVIDIA)", version (1, 5)
+[00:00:00.205] (10b8) INFO   	EGL surface: +srgb
+[00:00:00.206] (10b8) INFO   	Trying native-render
+[00:00:00.206] (10b8) WARN   No config found!
+[00:00:00.206] (10b8) INFO   	Trying presentation
+[00:00:00.206] (10b8) WARN   EGL says it can present to the window but not natively
+[00:00:00.206] (10b8) INFO   	EGL context: +debug
+[00:00:00.207] (10b8) INFO   	EGL context: +robust access EXT
+[00:00:00.207] (10b8) INFO   	EGL context: +surfaceless
+[00:00:00.209] (10b8) INFO   Max label length: 1024
+[00:00:00.209] (10b8) INFO   Enabling GLES debug output
+[00:00:00.210] (10b8) INFO   Vendor: Google Inc. (NVIDIA)
+[00:00:00.210] (10b8) INFO   Renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 3080 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.15.5612)
+[00:00:00.210] (10b8) INFO   Version: OpenGL ES 3.0.0 (ANGLE 2.1.18912 git hash: 872d7947bb76)
+[00:00:00.210] (10b8) INFO   SL version: OpenGL ES GLSL ES 3.00 (ANGLE 2.1.18912 git hash: 872d7947bb76)
+[00:00:00.210] (10b8) INFO   Adapter Gl AdapterInfo { name: "ANGLE (NVIDIA, NVIDIA GeForce RTX 3080 Ti Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.15.5612)", vendor: 4318, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+[00:00:00.217] (10b8) INFO   Created texture Valid((0, 1, Gl)) with TextureDescriptor { label: Some("pixels_source_texture"), size: Extent3d { width: 1920, height: 1080, depth_or_array_layers: 1 }, mip_level_count: 1, sample_count: 1, dimension: D2, format: Rgba8UnormSrgb, usage: TextureUsages(COPY_DST | TEXTURE_BINDING), view_formats: [] }
+[00:00:00.220] (10b8) INFO   Created buffer Valid((0, 1, Gl)) with BufferDescriptor { label: Some("pixels_scaling_renderer_vertex_buffer"), size: 24, usage: BufferUsages(VERTEX), mapped_at_creation: true }
+[00:00:00.220] (10b8) INFO   Created buffer Valid((1, 1, Gl)) with BufferDescriptor { label: Some("pixels_scaling_renderer_matrix_uniform_buffer"), size: 64, usage: BufferUsages(COPY_DST | UNIFORM), mapped_at_creation: true }
+[00:00:00.222] (10b8) INFO   	Compiled shader NativeShader(5)
+[00:00:00.223] (10b8) INFO   	Compiled shader NativeShader(6)
+[00:00:00.223] (10b8) INFO   	Linked program NativeProgram(4)
+[00:00:00.231] (10b8) INFO   Created render pipeline Valid((0, 1, Gl)) with RenderPipelineDescriptor { label: Some("pixels_scaling_renderer_pipeline"), layout: Some((0, 1, Gl)), vertex: VertexState { stage: ProgrammableStageDescriptor { module: (0, 1, Gl), entry_point: "vs_main" }, buffers: [VertexBufferLayout { array_stride: 8, step_mode: Vertex, attributes: [VertexAttribute { format: Float32x2, offset: 0, shader_location: 0 }] }] }, primitive: PrimitiveState { topology: TriangleList, strip_index_format: None, front_face: Ccw, cull_mode: None, unclipped_depth: false, polygon_mode: Fill, conservative: false }, depth_stencil: None, multisample: MultisampleState { count: 1, mask: 18446744073709551615, alpha_to_coverage_enabled: false }, fragment: Some(FragmentState { stage: ProgrammableStageDescriptor { module: (0, 1, Gl), entry_point: "fs_main" }, targets: [Some(ColorTargetState { format: Rgba8UnormSrgb, blend: Some(BlendState { color: BlendComponent { src_factor: One, dst_factor: OneMinusSrcAlpha, operation: Add }, alpha: BlendComponent { src_factor: One, dst_factor: OneMinusSrcAlpha, operation: Add } }), write_mask: ColorWrites(RED | GREEN | BLUE | ALPHA) })] }), multiview: None }
+[00:00:00.324] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 1920, height: 1080, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.324] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:00.326] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 1424, height: 714, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.326] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:00.327] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 1440, height: 753, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.327] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:00.327] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 800, height: 600, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.327] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:00.328] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 800, height: 600, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.328] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:00.328] (10b8) INFO   configuring surface with SurfaceConfiguration { usage: TextureUsages(RENDER_ATTACHMENT), format: Rgba8UnormSrgb, width: 1920, height: 1080, present_mode: AutoVsync, alpha_mode: Opaque, view_formats: [] }
+[00:00:00.328] (10b8) INFO   Automatically choosing presentation mode by rule AutoVsync. Chose Fifo
+[00:00:04.183] (10b8) INFO   LeftButton
+[00:00:04.404] (10b8) INFO   Dropping Global
+[00:00:04.432] (10b8) INFO   Destroying 2 command encoders

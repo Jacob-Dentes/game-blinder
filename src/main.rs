@@ -1,37 +1,64 @@
+#![windows_subsystem = "windows"]
 use pixels::wgpu::Backends;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+
 use winit::application::ApplicationHandler;
 use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
 use winit::window::{Window, WindowId};
 
+use inputbot::{KeybdKey, MouseButton};
+
+use std::collections::{BTreeSet, VecDeque};
+use std::sync::{Arc, Mutex, OnceLock};
+use std::thread;
+use std::time::{Duration, Instant};
+
+use log::info;
+use std::fs::read_to_string;
+use std::str::FromStr;
+
 const WIDTH: u32 = 1920;
 const HEIGHT: u32 = 1080;
-const BOX_SIZE: i16 = 64;
+
+static INPUTS: OnceLock<Arc<Mutex<VecDeque<String>>>> = OnceLock::new();
 
 /// Representation of the application state. In this example, a box will bounce around the screen.
 struct World {
-    box_x: i16,
-    box_y: i16,
-    velocity_x: i16,
-    velocity_y: i16,
+    last_input: Instant,
+    dark_duration: Duration,
+    triggers: BTreeSet<String>,
+    debugging: bool,
 }
 
 struct App {
     window: Option<Window>,
     world: World,
     pixels: Option<Pixels>,
+    inputs: Arc<Mutex<VecDeque<String>>>,
 }
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        // let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
+        let _ = {
+            //(icon_rgba, icon_width, icon_height) = {
+            // let image = image::open("ph--eye-slash-light")
+            //      .expect("Failed to load window icon.")
+            //      .into_rgba8();
+            // let (width, height) = image.dimensions();
+            // let rgba = image.into_raw();
+            // (rgba, width, height)
+        };
+        // let icon = winit::window::Icon::from_rgba(icon_rgba, icon_width, icon_height)
+        //     .expect("Failed to process icon file.");
         let window = event_loop
             .create_window(
                 Window::default_attributes()
                     .with_transparent(true)
                     .with_decorations(false)
-                    .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None))),
+                    .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
+                    // .with_window_icon(Some(icon.clone()))
+                    .with_title("Blinder"),
             )
             .unwrap();
         window.set_cursor_hittest(false).unwrap();
@@ -65,7 +92,14 @@ impl ApplicationHandler for App {
                         p.render().unwrap();
                     }
                 };
-                self.world.update();
+                match self.inputs.lock() {
+                    Ok(mut deq) => {
+                        for s in deq.drain(..) {
+                            self.world.update(s);
+                        }
+                    }
+                    Err(_) => (),
+                }
                 self.window
                     .as_ref()
                     .unwrap()
@@ -82,58 +116,116 @@ impl ApplicationHandler for App {
 }
 
 fn main() {
+    // contains a buffer of inputs from the input thread to the game thread
+    INPUTS.get_or_init(|| Arc::new(Mutex::new(VecDeque::new())));
+
+    {
+        // The closure runs each time a key is pressed
+        KeybdKey::bind_all(|event| match inputbot::from_keybd_key(event) {
+            Some(c) => {
+                let mut deq = INPUTS.get().unwrap().lock().unwrap();
+                deq.push_back(c.to_string());
+            }
+            None => println!("Unregistered key"),
+        });
+        // The closure runs each time a mouse button is pressed
+        MouseButton::bind_all(|event| {
+            let mut deq = INPUTS.get().unwrap().lock().unwrap();
+            deq.push_back(format!("{:?}", event).to_string());
+        });
+    }
+    // Starts the thread that listens for keyboard and mouse events
+    thread::spawn(|| {
+        inputbot::handle_input_events();
+    });
+    // Starts the gameloop and spawns the game window
     let event_loop = EventLoop::new().unwrap();
     event_loop.set_control_flow(ControlFlow::Poll);
 
+    let (triggers, blind_len, debugging) = {
+        match read_to_string("config.txt") {
+            Ok(s) => {
+                let lines: Vec<String> = s.split("\n").map(|x| x.trim().into()).collect();
+                let debugging = {
+                    if lines.len() >= 3 {
+                        match FromStr::from_str(&lines[2]) {
+                            Ok(b) => b,
+                            Err(_) => false,
+                        }
+                    } else {
+                        false
+                    }
+                };
+                let blind_len = {
+                    if lines.len() >= 2 {
+                        match FromStr::from_str(&lines[1]) {
+                            Ok(f) => f,
+                            Err(_) => 1.0,
+                        }
+                    } else {
+                        1.0
+                    }
+                };
+                let blinders = {
+                    if lines.len() >= 1 {
+                        lines[0]
+                            .split(",")
+                            .map(|x| x.trim().to_lowercase().into())
+                            .collect::<BTreeSet<String>>()
+                    } else {
+                        BTreeSet::new()
+                    }
+                };
+                (blinders, blind_len, debugging)
+            }
+            Err(_) => (BTreeSet::new(), 1.0, true),
+        }
+    };
+    if debugging {
+        simple_logging::log_to_file("debug.log", log::LevelFilter::Info).unwrap();
+    }
+
     let mut app = App {
         window: None,
-        world: World::new(),
+        world: World::new(triggers, blind_len, debugging),
         pixels: None,
+        inputs: INPUTS.get().unwrap().clone(),
     };
     event_loop.run_app(&mut app).unwrap();
 }
 
 impl World {
     /// Create a new `World` instance that can draw a moving box.
-    fn new() -> Self {
+    fn new(triggers: BTreeSet<String>, duration: f32, debugging: bool) -> Self {
         Self {
-            box_x: 24,
-            box_y: 16,
-            velocity_x: 10,
-            velocity_y: 10,
+            last_input: Instant::now(),
+            triggers,
+            dark_duration: Duration::from_secs_f32(duration),
+            debugging,
         }
     }
 
     /// Update the `World` internal state; bounce the box around the screen.
-    fn update(&mut self) {
-        if self.box_x <= 0 || self.box_x + BOX_SIZE > WIDTH as i16 {
-            self.velocity_x *= -1;
+    fn update(&mut self, s: String) {
+        if self.triggers.contains(&(s.to_lowercase())) {
+            self.last_input = Instant::now();
         }
-        if self.box_y <= 0 || self.box_y + BOX_SIZE > HEIGHT as i16 {
-            self.velocity_y *= -1;
+        if self.debugging {
+            info!("{}", s);
         }
-
-        self.box_x += self.velocity_x;
-        self.box_y += self.velocity_y;
     }
 
     /// Draw the `World` state to the frame buffer.
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     fn draw(&self, frame: &mut [u8]) {
-        for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
-            let x = (i % WIDTH as usize) as i16;
-            let y = (i / WIDTH as usize) as i16;
-
-            let inside_the_box = x >= self.box_x
-                && x < self.box_x + BOX_SIZE
-                && y >= self.box_y
-                && y < self.box_y + BOX_SIZE;
-
-            let rgba = if inside_the_box {
-                [0x5e, 0x48, 0xe8, 0xff]
-            } else {
+        let rgba = {
+            if self.last_input.elapsed() > self.dark_duration {
                 [0x00, 0x00, 0x00, 0x00]
-            };
+            } else {
+                [0x00, 0x00, 0x00, 0xff]
+            }
+        };
+        for pixel in frame.chunks_exact_mut(4) {
             pixel.copy_from_slice(&rgba);
         }
     }
