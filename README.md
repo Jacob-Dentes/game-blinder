@@ -16,10 +16,11 @@ be black for, you should place a 'config.txt' file in the same directory as the 
 The text file should be formatted in the following way. The first line is a comma-separated
 list of the inputs to trigger black screen. The second line is a decimal number for the
 number of seconds the screen will stay black for after each input. Here is an example config.txt:
-`
-w, a, s, d, leftbutton, leftshift, comma
-2.0
-`
+
+`w, a, s, d, leftbutton, leftshift, comma`
+
+`2.0`
+
 With this configuration, pressing any of keys in "WASD", left clicking, pressing left shift,
 or hitting the comma key will cause the app window to go black for 2 seconds.
 
@@ -33,12 +34,12 @@ and command keys for mac); they are aliased with "lwindows" and "lcommand", "rwi
 respectively.
 
 #### Keyboard keys
-- a 
+- a
 - b 
 - c 
 - d 
 - e 
-- f 
+- f
 - g 
 - h 
 - i 
@@ -66,7 +67,7 @@ respectively.
 - 2 
 - @ 
 - 3 
-- # 
+- \# 
 - 4 
 - $ 
 - 5 
@@ -76,7 +77,7 @@ respectively.
 - 7 
 - & 
 - 8 
-- * 
+- \* 
 - 9 
 - ( 
 - ` 
@@ -85,8 +86,8 @@ respectively.
 - ? 
 - < 
 - . 
-- > 
-- - 
+- \> 
+- \- 
 - _ 
 - ; 
 - : 
@@ -95,7 +96,7 @@ respectively.
 - ] 
 - } 
 - = 
-- + 
+- \+ 
 - \ 
 - | 
 - ' 
