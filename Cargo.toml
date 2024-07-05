@@ -1,5 +1,5 @@
 [package]
-name = "winit_blinder"
+name = "game_blinder"
 version = "0.1.0"
 edition = "2021"
 
