@@ -7,6 +7,9 @@ This allows, for example, turning the screen black each time the player moves or
 I have only tested this app on Windows11. I have no idea if it will work on any other
 platform.
 
+## Asset credits
+All assets used are under the MIT license from [Phosphor icons](https://github.com/phosphor-icons/core).
+
 ## Antivirus
 As an app with a sometimes-seethrough window that listens to global inputs, this app is
 understandably prone to being flagged by antivirus. The app only listens to registered
