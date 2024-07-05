@@ -12,28 +12,21 @@ use inputbot::{KeybdKey, MouseButton};
 use std::collections::{BTreeSet, VecDeque};
 use std::sync::{Arc, Mutex, OnceLock};
 use std::thread;
-use std::time::{Duration, Instant};
 
-use log::info;
 use std::fs::read_to_string;
 use std::str::FromStr;
+
+mod app_state;
+use app_state::AppState;
 
 const WIDTH: u32 = 1920;
 const HEIGHT: u32 = 1080;
 
 static INPUTS: OnceLock<Arc<Mutex<VecDeque<String>>>> = OnceLock::new();
 
-/// Representation of the application state. In this example, a box will bounce around the screen.
-struct World {
-    last_input: Instant,
-    dark_duration: Duration,
-    triggers: BTreeSet<String>,
-    debugging: bool,
-}
-
 struct App {
     window: Option<Window>,
-    world: World,
+    app_state: AppState,
     pixels: Option<Pixels>,
     inputs: Arc<Mutex<VecDeque<String>>>,
 }
@@ -87,14 +80,14 @@ impl ApplicationHandler for App {
                 match self.pixels.as_mut() {
                     None => (),
                     Some(p) => {
-                        self.world.draw(p.frame_mut());
+                        self.app_state.draw(p.frame_mut());
                         p.render().unwrap();
                     }
                 };
                 match self.inputs.lock() {
                     Ok(mut deq) => {
                         for s in deq.drain(..) {
-                            self.world.update(s);
+                            self.app_state.update(s);
                         }
                     }
                     Err(_) => (),
@@ -186,46 +179,9 @@ fn main() {
 
     let mut app = App {
         window: None,
-        world: World::new(triggers, blind_len, debugging),
+        app_state: AppState::new(triggers, blind_len, debugging),
         pixels: None,
         inputs: INPUTS.get().unwrap().clone(),
     };
     event_loop.run_app(&mut app).unwrap();
-}
-
-impl World {
-    /// Create a new `World` instance that can draw a moving box.
-    fn new(triggers: BTreeSet<String>, duration: f32, debugging: bool) -> Self {
-        Self {
-            last_input: Instant::now(),
-            triggers,
-            dark_duration: Duration::from_secs_f32(duration),
-            debugging,
-        }
-    }
-
-    /// Update the `World` internal state; bounce the box around the screen.
-    fn update(&mut self, s: String) {
-        if self.triggers.contains(&(s.to_lowercase())) {
-            self.last_input = Instant::now();
-        }
-        if self.debugging {
-            info!("{}", s);
-        }
-    }
-
-    /// Draw the `World` state to the frame buffer.
-    /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
-    fn draw(&self, frame: &mut [u8]) {
-        let rgba = {
-            if self.last_input.elapsed() > self.dark_duration {
-                [0x00, 0x00, 0x00, 0x00]
-            } else {
-                [0x00, 0x00, 0x00, 0xff]
-            }
-        };
-        for pixel in frame.chunks_exact_mut(4) {
-            pixel.copy_from_slice(&rgba);
-        }
-    }
 }
