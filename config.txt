@@ -1,3 +1,2 @@
 w, a, s, d, leftbutton, rightbutton
 1.0
-true

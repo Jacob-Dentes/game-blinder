@@ -1,31 +1,21 @@
-use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
-
-use log::info;
 
 pub struct AppState {
     last_input: Instant,
     dark_duration: Duration,
-    triggers: BTreeSet<String>,
-    debugging: bool,
 }
 
 impl AppState {
-    pub fn new(triggers: BTreeSet<String>, duration: f32, debugging: bool) -> Self {
+    pub fn new(duration: f32) -> Self {
         Self {
             last_input: Instant::now(),
-            triggers,
             dark_duration: Duration::from_secs_f32(duration),
-            debugging,
         }
     }
 
-    pub fn update(&mut self, s: String) {
-        if self.triggers.contains(&(s.to_lowercase())) {
+    pub fn update(&mut self, n: &u8) {
+        if n >= &1 {
             self.last_input = Instant::now();
-        }
-        if self.debugging {
-            info!("{}", s);
         }
     }
 
