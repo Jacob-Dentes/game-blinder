@@ -34,7 +34,7 @@ or hitting the comma key will cause the app window to go black for 2 seconds.
 **Note:** Holding down keys will act like the key is pressed every frame. Holding down mouse
 buttons only registers as the inital click.
 
-### A comprehensive list of representations
+### A comprehensive list of key representations
 This section contains all accepted input strings for the config file. As a note, the "lsuper"
 and "rsuper" keys are the platform dependent super keys (for example, windows keys for windows
 and command keys for mac); they are aliased with "lwindows" and "lcommand", "rwindows" and "rcommand,"
