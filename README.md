@@ -3,6 +3,10 @@ This is a simple app for creating challenging video game playthroughs.
 It allows binding keyboard and mouse inputs to turning the app window black.
 This allows, for example, turning the screen black each time the player moves or clicks.
 
+## Platforms
+I have only tested this app on Windows11. I have no idea if it will work on any other
+platform.
+
 ## Antivirus
 As an app with a sometimes-seethrough window that listens to global inputs, this app is
 understandably prone to being flagged by antivirus. The app only listens to registered
